@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Foto to Anime</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    img { max-width: 300px; margin: 10px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Ubah Foto Menjadi Anime</h1>
+  <input type="file" id="upload" accept="image/*"><br><br>
+  <button onclick="uploadImage()">Proses</button>
+  <p id="status"></p>
+  <div id="result"></div>
+
+  <script>
+    async function uploadImage() {
+      const file = document.getElementById('upload').files[0];
+      if (!file) return alert('Pilih gambar terlebih dahulu!');
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      document.getElementById('status').innerText = 'Mengupload dan memproses...';
+
+      const res = await fetch('/api/toanime', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        document.getElementById('status').innerText = 'Gagal: ' + data.error;
+        return;
+      }
+
+      document.getElementById('status').innerText = 'Berhasil!';
+      document.getElementById('result').innerHTML = `
+        <h3>Hasil:</h3>
+        <img src="${data.result}" alt="Hasil Anime">
+      `;
+    }
+  </script>
+</body>
+</html>
